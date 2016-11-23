@@ -83,7 +83,7 @@ const main = () => {
     const commands = tests(ipfs)
     Promise.map(commands, run, { concurrency: 1 })
       .then((res) => {
-        let runTime = new Date().getTime()
+        let runTime = new Date().getTime() - start
         console.log(`Total time: ${Math.floor(runTime / 1000)} seconds`)
         console.log()
         console.log(res)

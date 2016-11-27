@@ -1,8 +1,9 @@
 'use strict'
 
-const expect = require('chai').expect
+const assert = require('assert')
 
 // Some test data
+const testTopic = 'helloworld'
 const testBuffer = new Buffer("testing 1 2 3")
 const testObjectHash = 'QmPespFG7po1ieDGF3NSzP5tZiKXHaLz7DCGxc4HEpUwzG'
 
@@ -11,14 +12,52 @@ module.exports = (ipfs) => {
   // Add objects to the list here to run them in the benchmarks
   return [
     {
+      description: 'Send/receive messages - no peers',
+      name: 'ipfs.pubsub.subscribe',
+      command: ipfs.pubsub.subscribe,
+      args: [testTopic],
+      count: 1000,
+      resShouldEqual: (err, res, done) => {
+        assert.equal(err, null)
+        res.on('data', (message) => {
+          assert.deepEqual(message.data, testBuffer.toString())
+          res.cancel(done)
+        })
+        ipfs.pubsub.publish(testTopic, testBuffer)
+      } 
+    },
+    {
+      name: 'ipfs.pubsub.publish',
+      command: ipfs.pubsub.publish,
+      description: 'Run pubsub.publish',
+      args: [testTopic, testBuffer],
+      count: 1000,
+      resShouldEqual: (err, res, done) => {
+        assert.equal(err, null)
+        done()
+      } 
+    },
+    {
+      name: 'ipfs.pubsub.subscribe',
+      command: ipfs.pubsub.subscribe,
+      description: 'Run pubsub.subscribe and cancel the subscription',
+      args: [testTopic],
+      count: 1000,
+      resShouldEqual: (err, res, done) => {
+        assert.equal(err, null)
+        assert.notEqual(res, null)
+        res.cancel(done)
+      } 
+    },
+    {
       name: 'ipfs.object.put',
       command: ipfs.object.put,
       args: [testBuffer],
       count: 1000,
       resShouldEqual: (err, res, done) => {
         // Returns a DAGNode
-        expect(err).to.not.exist
-        expect(res.data).to.equal(testBuffer)
+        assert.equal(err, null)
+        assert.deepEqual(res.toJSON().data, testBuffer)
         done() // remember to call done at the end of the check
       } 
     },
@@ -29,8 +68,8 @@ module.exports = (ipfs) => {
       count: 10000,
       resShouldEqual: (err, res, done) => {
         // Returns a DAGNode
-        expect(err).to.not.exist
-        expect(res.data).to.equal(testBuffer)
+        assert.equal(err, null)
+        assert.deepEqual(res.data, testBuffer)
         done()
       } 
     },
@@ -40,13 +79,11 @@ module.exports = (ipfs) => {
       args: [],
       count: 1000,
       resShouldEqual: (err, res, done) => {
-        // console.log(res)
-        expect(err).to.not.exist
-        expect(res.id).to.exist
-        expect(res.publicKey).to.exist
-        expect(res.addresses).to.exist
-        expect(res.agentVersion).to.exist
-        expect(res.protocolVersion).to.exist
+        assert.equal(err, null)
+        assert.notEqual(res.publicKey, null)
+        assert.notEqual(res.addresses, null)
+        assert.notEqual(res.agentVersion, null)
+        assert.notEqual(res.protocolVersion, null)
         done()
       } 
     },
@@ -56,10 +93,10 @@ module.exports = (ipfs) => {
       args: [],
       count: 1000,
       resShouldEqual: (err, res, done) => {
-        expect(err).to.not.exist
-        expect(res.version).to.exist
-        expect(res.commit).to.exist
-        expect(res.repo).to.exist
+        assert.equal(err, null)
+        assert.notEqual(res.version, null)
+        assert.notEqual(res.commit, null)
+        assert.notEqual(res.repo, null)
         done()
       } 
     },

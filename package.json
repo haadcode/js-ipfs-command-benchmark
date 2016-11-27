@@ -1,6 +1,6 @@
 {
   "name": "ipfs-command-benchmark",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Throughput benchmarks for IPFS commands",
   "main": "benchmark.js",
   "scripts": {
@@ -11,7 +11,6 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.4.6",
-    "chai": "^3.5.0",
-    "ipfs-daemon": "^0.2.3"
+    "ipfs-daemon": "^0.3.0-beta.3"
   }
 }

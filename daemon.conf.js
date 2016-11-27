@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = {
   IpfsDataDir: '/tmp/ipfs-command-benchmark',
   Addresses: {
